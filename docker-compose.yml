@@ -1,0 +1,100 @@
+version: '3.8'
+
+services:
+  # Backend API Service
+  backend:
+    build:
+      context: ./dealerbuilt-api-service
+      dockerfile: Dockerfile
+    container_name: dealerbuilt-backend
+    environment:
+      - FLASK_ENV=production
+      - DEALERBUILT_USERNAME=${DEALERBUILT_USERNAME:-demo_user}
+      - DEALERBUILT_PASSWORD=${DEALERBUILT_PASSWORD:-demo_password}
+      - DEALERBUILT_SOURCE_ID=${DEALERBUILT_SOURCE_ID:-DEMO_SOURCE}
+      - DEALERBUILT_COMPANY_ID=${DEALERBUILT_COMPANY_ID:-DEMO_COMPANY}
+      - DEALERBUILT_STORE_ID=${DEALERBUILT_STORE_ID:-DEMO_STORE}
+      - DEALERBUILT_SERVICE_LOCATION_ID=${DEALERBUILT_SERVICE_LOCATION_ID:-DEMO_SERVICE_LOC}
+    volumes:
+      - backend_data:/app/data
+    networks:
+      - dealerbuilt_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/dashboard/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Frontend Dashboard
+  frontend:
+    build:
+      context: ./dealerbuilt-dashboard
+      dockerfile: Dockerfile
+    container_name: dealerbuilt-frontend
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - backend
+    networks:
+      - dealerbuilt_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  # Redis for caching (optional but recommended for production)
+  redis:
+    image: redis:7-alpine
+    container_name: dealerbuilt-redis
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - dealerbuilt_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+
+  # PostgreSQL for production database (optional upgrade from SQLite)
+  postgres:
+    image: postgres:15-alpine
+    container_name: dealerbuilt-postgres
+    environment:
+      - POSTGRES_DB=dealerbuilt
+      - POSTGRES_USER=dealerbuilt
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-dealerbuilt_secure_password}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - dealerbuilt_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dealerbuilt"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  backend_data:
+    driver: local
+  redis_data:
+    driver: local
+  postgres_data:
+    driver: local
+
+networks:
+  dealerbuilt_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
