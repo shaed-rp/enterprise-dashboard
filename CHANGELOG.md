@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to the DealerBuilt Enterprise Dashboard project will be documented in this file.
+All notable changes to the DealerX Enterprise Dashboard project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Frontend Dashboard** - React-based responsive dashboard with modern UI
 - **Backend API Service** - Flask-based API integration with DealerBuilt SOAP API
 - **Role-Based Access Control** - Executive, Manager, and Staff level access
-- **Real-Time Data Integration** - Live data from DealerBuilt API with caching
+- **Real-Time Data Integration** - Live data from DMS API with caching
 - **Executive Dashboard** - Comprehensive KPI monitoring and analytics
 - **Service Operations Dashboard** - Service department management and tracking
 - **Sales Performance Dashboard** - Sales analytics and pipeline management
@@ -32,7 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Security Features** - CORS, authentication, input validation
 - **Performance Optimization** - Caching, compression, and optimization
 - **Error Handling** - Robust error handling and logging
-- **API Documentation** - Complete DealerBuilt API integration documentation
+- **API Documentation** - Complete DMS API integration documentation
 
 ### Technical Features
 - **Frontend**: React 18, Vite, Tailwind CSS, Shadcn/UI, Recharts, Lucide Icons
@@ -45,7 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### API Integration
 - **Complete DealerBuilt Integration** - All 103+ API endpoints supported
-- **SOAP Client** - Custom SOAP client for DealerBuilt API communication
+- **SOAP Client** - Custom SOAP client for DMS API communication
 - **Data Caching** - Intelligent caching with configurable TTL
 - **Error Recovery** - Automatic retry and error handling
 - **Real-Time Updates** - Live data synchronization

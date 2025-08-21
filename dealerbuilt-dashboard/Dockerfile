@@ -1,4 +1,4 @@
-# DealerBuilt Enterprise Dashboard - Frontend
+# DealerX Enterprise Dashboard - Frontend
 # Multi-stage build for optimized production deployment
 
 # Build stage

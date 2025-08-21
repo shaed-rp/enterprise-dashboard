@@ -1,4 +1,4 @@
-# DealerBuilt API Service - Backend
+# DealerX API Service - Backend
 # Production-ready Flask application with WSGI server
 
 FROM python:3.11-slim

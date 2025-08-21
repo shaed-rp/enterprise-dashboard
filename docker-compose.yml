@@ -6,7 +6,7 @@ services:
     build:
       context: ./dealerbuilt-api-service
       dockerfile: Dockerfile
-    container_name: dealerbuilt-backend
+    container_name: dealerx-backend
     environment:
       - FLASK_ENV=production
       - DEALERBUILT_USERNAME=${DEALERBUILT_USERNAME:-demo_user}
@@ -18,7 +18,7 @@ services:
     volumes:
       - backend_data:/app/data
     networks:
-      - dealerbuilt_network
+      - dealerx_network
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/api/dashboard/health"]
@@ -32,14 +32,14 @@ services:
     build:
       context: ./dealerbuilt-dashboard
       dockerfile: Dockerfile
-    container_name: dealerbuilt-frontend
+    container_name: dealerx-frontend
     ports:
       - "80:80"
       - "443:443"
     depends_on:
       - backend
     networks:
-      - dealerbuilt_network
+      - dealerx_network
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost/health"]
@@ -51,12 +51,12 @@ services:
   # Redis for caching (optional but recommended for production)
   redis:
     image: redis:7-alpine
-    container_name: dealerbuilt-redis
+    container_name: dealerx-redis
     command: redis-server --appendonly yes
     volumes:
       - redis_data:/data
     networks:
-      - dealerbuilt_network
+      - dealerx_network
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
@@ -67,18 +67,18 @@ services:
   # PostgreSQL for production database (optional upgrade from SQLite)
   postgres:
     image: postgres:15-alpine
-    container_name: dealerbuilt-postgres
+    container_name: dealerx-postgres
     environment:
-      - POSTGRES_DB=dealerbuilt
-      - POSTGRES_USER=dealerbuilt
+      - POSTGRES_DB=dealerx
+      - POSTGRES_USER=dealerx
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-dealerbuilt_secure_password}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
-      - dealerbuilt_network
+      - dealerx_network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U dealerbuilt"]
+      test: ["CMD-SHELL", "pg_isready -U dealerx"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -92,7 +92,7 @@ volumes:
     driver: local
 
 networks:
-  dealerbuilt_network:
+  dealerx_network:
     driver: bridge
     ipam:
       config:

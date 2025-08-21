@@ -1,5 +1,5 @@
 """
-DealerBuilt API Integration Service
+DMS API Integration Service
 
 This service provides a comprehensive interface to the DealerBuilt SOAP API,
 handling authentication, data retrieval, caching, and error management.
@@ -20,12 +20,12 @@ logger = logging.getLogger(__name__)
 
 class DealerBuiltAPIService:
     """
-    Main service class for DealerBuilt API integration
+    Main service class for DMS API integration (DealerBuilt API and other DMS systems)
     """
     
     def __init__(self, config: Dict[str, Any]):
         """
-        Initialize the DealerBuilt API service
+        Initialize the DMS API service
         
         Args:
             config: Configuration dictionary containing API credentials and settings
@@ -51,7 +51,7 @@ class DealerBuiltAPIService:
 
     def _create_soap_envelope(self, method: str, parameters: Dict[str, Any]) -> str:
         """
-        Create SOAP envelope for DealerBuilt API requests
+        Create SOAP envelope for DMS API requests
         
         Args:
             method: The API method name
@@ -438,7 +438,7 @@ def get_api_service(environment: str = 'development') -> DealerBuiltAPIService:
         environment: Environment configuration to use
         
     Returns:
-        DealerBuilt API service instance
+        DMS API service instance
     """
     global api_service
     

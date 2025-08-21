@@ -1,6 +1,6 @@
 # Project Structure
 
-This document provides an overview of the DealerBuilt Enterprise Dashboard project structure and organization.
+This document provides an overview of the DealerX Enterprise Dashboard project structure and organization.
 
 ## Root Directory
 
@@ -69,7 +69,7 @@ dealerbuilt-dashboard/
 ```
 
 ### Key Frontend Technologies
-- **React 18**: Modern React with hooks and concurrent features
+- **React 19**: Modern React with hooks and concurrent features
 - **Vite**: Fast build tool and development server
 - **Tailwind CSS**: Utility-first CSS framework
 - **Shadcn/UI**: High-quality UI component library
@@ -94,7 +94,7 @@ dealerbuilt-api-service/
 │   │   ├── user.py                # User routes
 │   │   └── dashboard.py           # Dashboard API routes
 │   ├── services/                  # Business logic services
-│   │   └── dealerbuilt_api.py     # DealerBuilt API integration
+│   │   └── dealerbuilt_api.py     # DMS API integration (DealerBuilt API and other DMS systems)
 │   ├── static/                    # Static files (for full-stack deployment)
 │   ├── database/                  # Database files
 │   │   └── app.db                 # SQLite database
@@ -113,7 +113,7 @@ dealerbuilt-api-service/
 
 ### API Architecture
 - **RESTful Design**: Clean and consistent API endpoints
-- **SOAP Integration**: Custom SOAP client for DealerBuilt API
+- **SOAP Integration**: Custom SOAP client for DMS API (DealerBuilt API and other DMS systems)
 - **Caching Layer**: Redis-based caching for performance
 - **Error Handling**: Comprehensive error handling and logging
 - **Security**: CORS, input validation, and authentication middleware
@@ -132,7 +132,7 @@ dealerbuilt-api-service/
 
 ### Environment Configuration
 - **`.env.example`**: Template for environment variables
-  - DealerBuilt API credentials
+  - DMS API credentials
   - Database configuration
   - Security settings
   - Feature flags
@@ -166,7 +166,7 @@ dealerbuilt-api-service/
 3. **API Calls**: Frontend makes REST API calls to Flask backend
 4. **Authentication**: JWT tokens for secure communication
 
-### Backend to DealerBuilt API
+### Backend to DMS API
 1. **API Gateway**: Flask backend acts as API gateway
 2. **SOAP Integration**: Custom SOAP client communicates with DealerBuilt
 3. **Data Processing**: Backend processes and transforms API responses

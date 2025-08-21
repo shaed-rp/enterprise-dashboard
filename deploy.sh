@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# DealerBuilt Enterprise Dashboard - Deployment Script
+# DealerX Enterprise Dashboard - Deployment Script
 # This script automates the deployment process for the complete solution
 
 set -e

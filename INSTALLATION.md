@@ -1,4 +1,4 @@
-# Installation Guide - DealerBuilt Enterprise Dashboard
+# Installation Guide - DealerX Enterprise Dashboard
 
 ## Prerequisites
 
@@ -83,7 +83,7 @@ nano .env
 Update the following variables in `.env`:
 
 ```bash
-# DealerBuilt API Credentials
+# DMS API Credentials
 DEALERBUILT_USERNAME=your_actual_username
 DEALERBUILT_PASSWORD=your_actual_password
 DEALERBUILT_SOURCE_ID=your_source_id
@@ -128,8 +128,8 @@ open http://localhost
 #### API Configuration
 | Variable | Description | Required | Default |
 |----------|-------------|----------|---------|
-| `DEALERBUILT_USERNAME` | DealerBuilt API username | Yes | `demo_user` |
-| `DEALERBUILT_PASSWORD` | DealerBuilt API password | Yes | `demo_password` |
+| `DEALERBUILT_USERNAME` | DMS API username (DealerBuilt) | Yes | `demo_user` |
+| `DEALERBUILT_PASSWORD` | DMS API password (DealerBuilt) | Yes | `demo_password` |
 | `DEALERBUILT_SOURCE_ID` | Source identifier | Yes | `DEMO_SOURCE` |
 | `DEALERBUILT_COMPANY_ID` | Company identifier | Yes | `DEMO_COMPANY` |
 | `DEALERBUILT_STORE_ID` | Store identifier | Yes | `DEMO_STORE` |
@@ -396,7 +396,7 @@ watch docker stats
 
 **Installation Complete!**
 
-Your DealerBuilt Enterprise Dashboard should now be running and accessible at `http://localhost`. 
+Your DealerX Enterprise Dashboard should now be running and accessible at `http://localhost`. 
 
 For production deployment, remember to:
 1. Configure HTTPS/SSL

@@ -1,6 +1,6 @@
-# DealerBuilt Enterprise Dashboard
+# DealerX Enterprise Dashboard
 
-A comprehensive, enterprise-grade dashboard solution that integrates with the DealerBuilt API to provide real-time insights and operational management for automotive dealerships.
+A comprehensive, enterprise-grade dashboard solution that integrates with DMS (Dealer Management System) APIs, including DealerBuilt API, to provide real-time insights and operational management for automotive dealerships.
 
 ## 🚀 Features
 
@@ -31,7 +31,7 @@ A comprehensive, enterprise-grade dashboard solution that integrates with the De
 ## 🏗️ Architecture
 
 ### Frontend (React)
-- **Framework**: React 18 with Vite for fast development and building
+- **Framework**: React 19 with Vite for fast development and building
 - **UI Components**: Shadcn/UI with Tailwind CSS for consistent design
 - **State Management**: Context API for global state and user management
 - **Charts**: Recharts for data visualizations
@@ -39,7 +39,7 @@ A comprehensive, enterprise-grade dashboard solution that integrates with the De
 
 ### Backend (Flask)
 - **Framework**: Flask with Gunicorn for production deployment
-- **API Integration**: Custom SOAP client for DealerBuilt API communication
+- **DMS Integration**: Custom SOAP client for DMS API communication (DealerBuilt API and other DMS systems)
 - **Database**: SQLite for development, PostgreSQL for production
 - **Caching**: Redis for high-performance data caching
 - **Security**: CORS enabled, authentication middleware, input validation
@@ -53,7 +53,7 @@ A comprehensive, enterprise-grade dashboard solution that integrates with the De
 ## 📋 Prerequisites
 
 - Docker 20.10+ and Docker Compose 2.0+
-- DealerBuilt API credentials (username, password, organization IDs)
+- DMS API credentials (username, password, organization IDs) - supports DealerBuilt API and other DMS systems
 - Minimum 4GB RAM and 2 CPU cores for production deployment
 - Domain name and SSL certificate for HTTPS (production)
 
@@ -67,7 +67,7 @@ cp .env.example .env
 ```
 
 ### 2. Configure Environment
-Edit `.env` file with your DealerBuilt API credentials:
+Edit `.env` file with your DMS API credentials:
 ```bash
 DEALERBUILT_USERNAME=your_username
 DEALERBUILT_PASSWORD=your_password
@@ -88,6 +88,52 @@ DEALERBUILT_SERVICE_LOCATION_ID=your_service_location_id
 - **API Documentation**: http://localhost/api/docs
 
 ## 🔧 Development
+
+### Quick Start for Developers
+
+#### Prerequisites
+- **Node.js**: Version 18.0.0 or higher
+- **Python**: Version 3.8 or higher
+- **Git**: Version 2.30 or higher
+- **Docker**: Version 20.10 or higher (for full deployment)
+
+#### Local Development Setup
+
+1. **Clone the Repository**
+   ```bash
+   git clone <repository-url>
+   cd dealerbuilt-enterprise-dashboard
+   ```
+
+2. **Frontend Development**
+   ```bash
+   cd dealerbuilt-dashboard
+   npm install
+   npm run dev
+   ```
+   Frontend will be available at `http://localhost:5173`
+
+3. **Backend Development**
+   ```bash
+   cd dealerbuilt-api-service
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   pip install -r requirements.txt
+   python src/main.py
+   ```
+   Backend API will be available at `http://localhost:5000`
+
+4. **Environment Configuration**
+   ```bash
+   cp .env.example .env
+   # Edit .env with your DMS API credentials
+   ```
+
+#### Development Workflow
+- **Frontend**: Uses Vite for fast hot reloading
+- **Backend**: Flask development server with auto-reload
+- **Database**: SQLite for development, PostgreSQL for production
+- **Testing**: Run `npm test` (frontend) or `python -m pytest` (backend)
 
 ### Frontend Development
 ```bash
@@ -115,6 +161,84 @@ curl http://localhost:5000/api/dashboard/executive/summary
 # Test service operations
 curl http://localhost:5000/api/dashboard/service/summary
 ```
+
+## 🔍 Troubleshooting
+
+### Common Development Issues
+
+#### Frontend Issues
+
+**Build Errors**
+```bash
+# Clear dependencies and reinstall
+rm -rf node_modules package-lock.json
+npm install
+
+# Clear Vite cache
+rm -rf node_modules/.vite
+```
+
+**Runtime Errors**
+- Check browser console for error messages
+- Verify API endpoints are accessible
+- Check network tab for failed requests
+- Ensure backend service is running
+
+#### Backend Issues
+
+**Import Errors**
+```bash
+# Verify virtual environment is activated
+# Reinstall dependencies
+pip install -r requirements.txt --force-reinstall
+```
+
+**Database Connection Issues**
+```bash
+# Check database is running
+docker ps | grep postgres
+
+# Test connection
+python -c "from src.models.user import db; print(db.engine.execute('SELECT 1').scalar())"
+```
+
+**API Integration Issues**
+```bash
+# Test DMS API connection
+curl -X GET http://localhost:5000/api/dashboard/test-connection
+
+# Check API credentials
+echo $DEALERBUILT_USERNAME
+echo $DEALERBUILT_PASSWORD
+```
+
+### Performance Issues
+
+#### Frontend Performance
+- Use React DevTools Profiler
+- Check bundle size with webpack-bundle-analyzer
+- Monitor network requests in browser dev tools
+- Implement lazy loading for large components
+
+#### Backend Performance
+- Monitor database query performance
+- Check Redis cache hit rates
+- Use Flask-Profiler for API performance
+- Monitor memory usage and CPU utilization
+
+### Getting Help
+
+#### Resources
+- [Development Guide](DEVELOPMENT.md) - Comprehensive development setup
+- [API Reference](API_REFERENCE.md) - Backend API documentation
+- [Testing Guide](TESTING.md) - Testing procedures and guidelines
+- [User Guide](USER_GUIDE.md) - User documentation
+
+#### Support Channels
+- Create GitHub issues for bugs
+- Use GitHub Discussions for questions
+- Contact development team for urgent issues
+- Check troubleshooting guides in documentation
 
 ## 📊 API Endpoints
 
@@ -197,8 +321,8 @@ docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
 ### Environment Variables
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `DEALERBUILT_USERNAME` | DealerBuilt API username | `demo_user` |
-| `DEALERBUILT_PASSWORD` | DealerBuilt API password | `demo_password` |
+| `DEALERBUILT_USERNAME` | DMS API username (DealerBuilt) | `demo_user` |
+| `DEALERBUILT_PASSWORD` | DMS API password (DealerBuilt) | `demo_password` |
 | `DEALERBUILT_SOURCE_ID` | Source identifier | `DEMO_SOURCE` |
 | `DEALERBUILT_COMPANY_ID` | Company identifier | `DEMO_COMPANY` |
 | `DEALERBUILT_STORE_ID` | Store identifier | `DEMO_STORE` |
@@ -230,62 +354,12 @@ ENABLE_EXPORT_FUNCTIONALITY=true
 - **Concurrent Users**: Supports 100+ concurrent users per instance
 - **Data Throughput**: Handles 1000+ API requests per minute
 
-## 🔍 Troubleshooting
-
-### Common Issues
-
-#### API Connection Errors
-```bash
-# Check API credentials
-curl -X GET http://localhost:5000/api/dashboard/test-connection
-
-# Verify network connectivity
-docker-compose exec backend ping cdx.dealerbuilt.com
-
-# Check logs
-./deploy.sh logs backend
-```
-
-#### Frontend Not Loading
-```bash
-# Check nginx configuration
-docker-compose exec frontend nginx -t
-
-# Verify build process
-docker-compose build frontend --no-cache
-
-# Check frontend logs
-./deploy.sh logs frontend
-```
-
-#### Database Issues
-```bash
-# Check database connection
-docker-compose exec postgres pg_isready -U dealerbuilt
-
-# Reset database
-docker-compose down -v
-docker-compose up -d postgres
-```
-
-### Performance Issues
-```bash
-# Monitor resource usage
-docker stats
-
-# Check cache hit rate
-docker-compose exec redis redis-cli info stats
-
-# Analyze slow queries
-docker-compose logs backend | grep "slow query"
-```
-
 ## 📚 Documentation
 
 ### API Documentation
-- [DealerBuilt API Integration Guide](docs/api-integration.md)
-- [Endpoint Reference](docs/api-reference.md)
-- [Authentication Guide](docs/authentication.md)
+- [DMS Integration Guide](DMS_INTEGRATION.md)
+- [API Reference](API_REFERENCE.md)
+- [Development Guide](DEVELOPMENT.md)
 
 ### Development Guides
 - [Frontend Development](docs/frontend-development.md)

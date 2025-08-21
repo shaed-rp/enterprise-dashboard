@@ -1,4 +1,4 @@
-# DealerBuilt Enterprise Dashboard - User Guide
+# DealerX Enterprise Dashboard - User Guide
 
 ## Table of Contents
 1. [Getting Started](#getting-started)
@@ -16,7 +16,7 @@
 
 ### First Time Login
 
-When you first access the DealerBuilt Enterprise Dashboard, you'll be presented with a clean, modern login interface.
+When you first access the DealerX Enterprise Dashboard, you'll be presented with a clean, modern login interface.
 
 #### Login Process
 1. **Select Organization**: Choose your dealership organization from the dropdown
@@ -422,7 +422,7 @@ Press `⌘K` (Mac) or `Ctrl+K` (Windows) to open the command palette for:
 
 **Need Additional Help?**
 
-If you need further assistance with the DealerBuilt Enterprise Dashboard, please contact your system administrator or refer to the technical documentation provided with your installation.
+If you need further assistance with the DealerX Enterprise Dashboard, please contact your system administrator or refer to the technical documentation provided with your installation.
 
 **Dashboard Version**: 1.0.0  
 **Last Updated**: August 2025  

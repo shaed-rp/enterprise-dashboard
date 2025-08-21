@@ -31,7 +31,7 @@ def health_check():
 
 @dashboard_bp.route('/test-connection', methods=['GET'])
 def test_connection():
-    """Test DealerBuilt API connection"""
+    """Test DMS API connection"""
     try:
         result = api_service.test_connection()
         return jsonify(result)

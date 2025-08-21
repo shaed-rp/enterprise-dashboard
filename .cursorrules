@@ -1,0 +1,760 @@
+# DealerX Enterprise Dashboard - Cursor Rules
+
+## Project Overview
+This is a React 19 + TypeScript enterprise dashboard application for automotive dealerships with DMS integration capabilities. The project uses modern React patterns, strict TypeScript, and follows a component-based architecture with comprehensive type safety.
+
+## TypeScript Configuration
+- **Target**: ES2020
+- **Strict Mode**: Enabled
+- **Module Resolution**: Bundler
+- **JSX**: React-JSX
+- **Path Mapping**: `@/*` → `src/*`
+
+## Coding Style and Patterns
+
+### 1. Import Organization
+```typescript
+// React and core libraries first
+import React, { useState, useEffect, ReactNode } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+
+// Third-party libraries
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  TrendingUp, 
+  TrendingDown, 
+  DollarSign, 
+  Users, 
+  Car, 
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  Target,
+  RefreshCw,
+  LucideIcon
+} from 'lucide-react';
+
+// Local imports (relative paths)
+import { useAuth } from '../../contexts/AuthContext';
+import { useDashboard } from '../../contexts/DashboardContext';
+import { Button } from '../ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+
+// Type imports
+import { User, UserRole, UserPermissions, ExecutiveSummary } from '../../types';
+```
+
+### 2. Component Structure
+```typescript
+// Type definitions at the top
+interface ComponentProps {
+  title: string;
+  data: ExecutiveSummary;
+  onRefresh?: () => void;
+  className?: string;
+}
+
+// Component with proper typing
+export const ComponentName: React.FC<ComponentProps> = ({ 
+  title, 
+  data, 
+  onRefresh,
+  className 
+}) => {
+  // State with explicit typing
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  
+  // Hooks
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  
+  // Event handlers with proper typing
+  const handleRefresh = (): void => {
+    setLoading(true);
+    onRefresh?.();
+  };
+  
+  // Effects with cleanup
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+    
+    return () => clearTimeout(timer);
+  }, []);
+  
+  return (
+    <Card className={cn("p-6", className)}>
+      <CardHeader>
+        <CardTitle>{title}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        {/* Component content */}
+      </CardContent>
+    </Card>
+  );
+};
+```
+
+### 3. Type Definitions and Interfaces
+
+#### Core Types (from src/types/index.ts)
+```typescript
+// User and Authentication Types
+export interface User {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  avatar?: string;
+  allowedLocations: string[];
+  role: UserRole;
+}
+
+export type UserRole = 'executive' | 'service_manager' | 'sales_manager' | 'staff' | 'customer' | 'vendor';
+
+export interface UserPermissions {
+  Executive?: boolean;
+  'Dealer Principal'?: boolean;
+  'Accounting Access'?: boolean;
+  'Service Module Access'?: boolean;
+  'Sales/F&I Module Access'?: boolean;
+  'Parts Module Access'?: boolean;
+  'Management Reports'?: boolean;
+  'Service Managers'?: boolean;
+  'Service Reports'?: boolean;
+  'Can Enter Jobs'?: boolean;
+  'Can Enter Parts'?: boolean;
+  'Can Enter Tech Time'?: boolean;
+  'Can Mark RO Completed'?: boolean;
+  'Can Open ROs'?: boolean;
+  'Sales Managers'?: boolean;
+  'Sales Reports'?: boolean;
+  'Deal Access'?: boolean;
+  'Inventory Control'?: boolean;
+  'Finance Managers'?: boolean;
+  'Service Writers'?: boolean;
+  'Parts Counter'?: boolean;
+  'Office'?: boolean;
+  'DMS_User'?: boolean;
+}
+
+// API Response Types
+export interface ApiResponse<T> {
+  success: boolean;
+  data: T;
+  error?: string;
+  timestamp: string;
+}
+
+export interface DealerBuiltApiResponse<T> {
+  success: boolean;
+  data: T;
+  error?: string;
+  cache_hit?: boolean;
+  timestamp: string;
+}
+
+// Dashboard Data Types
+export interface ExecutiveSummary {
+  revenue: number;
+  unitsSold: number;
+  grossProfit: number;
+  customerSatisfaction: number;
+  activeDeals: number;
+  pendingAppointments: number;
+  inventoryValue: number;
+  totalROs: number;
+  completedROs: number;
+  averageROValue: number;
+  technicianUtilization: number;
+  customerRetention: number;
+}
+```
+
+#### Context Types
+```typescript
+// Context state interfaces
+interface AuthState {
+  isAuthenticated: boolean;
+  loading: boolean;
+  user: User | null;
+  organization: Organization | null;
+  location: Location | null;
+  permissions: UserPermissions;
+  error: string | null;
+}
+
+interface DashboardState {
+  loading: boolean;
+  sidebarCollapsed: boolean;
+  activeDashboard: string;
+  widgets: Widget[];
+  filters: DashboardFilters;
+  dateRange: DateRange;
+  refreshInterval: number;
+  notifications: Notification[];
+  searchResults: any[]; // TODO: Replace with proper type
+  recentItems: RecentItem[];
+}
+
+// Action types with discriminated unions
+type AuthAction =
+  | { type: 'LOGIN_START' }
+  | { type: 'LOGIN_SUCCESS'; payload: AuthData }
+  | { type: 'LOGIN_FAILURE'; payload: string }
+  | { type: 'LOGOUT' }
+  | { type: 'SET_LOADING'; payload: boolean };
+```
+
+### 4. Naming Conventions
+
+#### Files and Directories
+- **Components**: PascalCase (`DashboardHeader.tsx`, `CommandPalette.tsx`)
+- **Hooks**: camelCase with `use` prefix (`use-mobile.ts`, `useAuth`)
+- **Utilities**: camelCase (`utils.ts`, `mockAuthService.ts`)
+- **Types**: camelCase (`index.ts` in types directory)
+- **Contexts**: PascalCase (`AuthContext.tsx`, `DashboardContext.tsx`)
+- **Pages**: PascalCase (`LoginPage.tsx`, `ExecutiveDashboard.tsx`)
+
+#### Variables and Functions
+- **Variables**: camelCase (`user`, `isAuthenticated`, `sidebarCollapsed`)
+- **Functions**: camelCase (`handleRefresh`, `setLoading`, `generateToken`)
+- **Constants**: UPPER_SNAKE_CASE (`MOBILE_BREAKPOINT`, `DEFAULT_REFRESH_INTERVAL`)
+- **Types/Interfaces**: PascalCase (`User`, `AuthState`, `DashboardAction`)
+- **Enums**: PascalCase (`UserRole`, `NotificationType`)
+
+#### Component Props
+- **Props Interface**: Component name + Props (`DashboardHeaderProps`, `CommandPaletteProps`)
+- **Props**: camelCase with descriptive names (`onToggleCollapse`, `sidebarCollapsed`)
+
+### 5. State Management Patterns
+
+#### Context Pattern
+```typescript
+// Context creation with proper typing
+const AuthContext = createContext<{
+  state: AuthState;
+  dispatch: React.Dispatch<AuthAction>;
+  login: (credentials: LoginCredentials) => Promise<void>;
+  logout: () => Promise<void>;
+} | undefined>(undefined);
+
+// Provider component
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [state, dispatch] = useReducer(authReducer, initialState);
+  
+  const login = async (credentials: LoginCredentials): Promise<void> => {
+    dispatch({ type: 'LOGIN_START' });
+    try {
+      const authData = await mockAuthService.login(credentials);
+      dispatch({ type: 'LOGIN_SUCCESS', payload: authData });
+    } catch (error) {
+      dispatch({ type: 'LOGIN_FAILURE', payload: error instanceof Error ? error.message : 'Login failed' });
+    }
+  };
+  
+  const logout = async (): Promise<void> => {
+    await mockAuthService.logout();
+    dispatch({ type: 'LOGOUT' });
+  };
+  
+  return (
+    <AuthContext.Provider value={{ state, dispatch, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
+```
+
+#### Custom Hooks
+```typescript
+// Custom hook with proper typing
+export const useAuth = (): {
+  state: AuthState;
+  login: (credentials: LoginCredentials) => Promise<void>;
+  logout: () => Promise<void>;
+} => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};
+
+// Utility hook
+export function useIsMobile(): boolean {
+  const [isMobile, setIsMobile] = React.useState<boolean | undefined>(undefined);
+
+  React.useEffect(() => {
+    const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`);
+    const onChange = (): void => {
+      setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
+    };
+    mql.addEventListener("change", onChange);
+    setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
+    return () => mql.removeEventListener("change", onChange);
+  }, []);
+
+  return !!isMobile;
+}
+```
+
+### 6. Utility Functions
+
+#### Formatting Utilities (from src/lib/utils.ts)
+```typescript
+// Currency formatting
+export function formatCurrency(amount: number, currency: string = 'USD'): string {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: currency,
+  }).format(amount);
+}
+
+// Number formatting
+export function formatNumber(number: number, options: Intl.NumberFormatOptions = {}): string {
+  return new Intl.NumberFormat('en-US', options).format(number);
+}
+
+// Date formatting
+export function formatDate(date: Date | string | number, options: Intl.DateTimeFormatOptions = {}): string {
+  const defaultOptions: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  };
+  
+  return new Intl.DateTimeFormat('en-US', { ...defaultOptions, ...options }).format(
+    new Date(date)
+  );
+}
+
+// Class name utility
+export function cn(...inputs: ClassValue[]): string {
+  return twMerge(clsx(inputs));
+}
+
+// Debounce utility with proper typing
+export function debounce<T extends (...args: any[]) => any>(
+  func: T,
+  wait: number
+): (...args: Parameters<T>) => void {
+  let timeout: NodeJS.Timeout;
+  return function executedFunction(...args: Parameters<T>) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+```
+
+### 7. Service Layer Patterns
+
+#### Service Classes
+```typescript
+class MockAuthService {
+  private delay: (ms: number) => Promise<void>;
+
+  constructor() {
+    this.delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  async login(credentials: LoginCredentials): Promise<AuthData> {
+    await this.delay(800); // Simulate network delay
+
+    const { username, password, organizationId } = credentials;
+
+    // Find user in mock employee data
+    const employee = mockEmployeeData.find(emp => 
+      emp.email.toLowerCase() === username.toLowerCase() ||
+      `${emp.firstName}.${emp.lastName}`.toLowerCase() === username.toLowerCase()
+    );
+
+    if (!employee) {
+      throw new Error('Invalid username or password');
+    }
+
+    // Simple password validation (in real app, this would be properly hashed)
+    if (password !== 'demo123' && password !== 'password') {
+      throw new Error('Invalid username or password');
+    }
+
+    // Generate permissions based on employee data
+    const permissions = this.generatePermissions(employee);
+
+    const authData: AuthData = {
+      token: this.generateToken(),
+      user: {
+        id: employee.id,
+        firstName: employee.firstName,
+        lastName: employee.lastName,
+        email: employee.email,
+        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${employee.firstName}${employee.lastName}`,
+        allowedLocations: employee.allowedLocations,
+        role: this.determineRole(permissions),
+      },
+      organization: {
+        id: organization.id,
+        name: organization.name,
+        logo: organization.logo,
+        type: organization.type,
+        locations: organization.locations.filter(loc => 
+          employee.allowedLocations.includes(loc.id.toString()) || employee.allowedLocations.includes('*')
+        ),
+        settings: organization.settings,
+      },
+      location: defaultLocation,
+      permissions: permissions,
+    };
+
+    return authData;
+  }
+
+  private generateToken(): string {
+    return 'mock_jwt_token_' + Math.random().toString(36).substr(2, 9);
+  }
+
+  private generatePermissions(employee: User & UserPermissions): UserPermissions {
+    return {
+      Executive: employee.Executive,
+      'Dealer Principal': employee['Dealer Principal'],
+      'Accounting Access': employee['Accounting Access'],
+      // ... other permissions
+    };
+  }
+
+  private determineRole(permissions: UserPermissions): User['role'] {
+    if (permissions.Executive) return 'executive';
+    if (permissions['Service Managers']) return 'service_manager';
+    if (permissions['Sales Managers']) return 'sales_manager';
+    if (permissions['Service Writers'] || permissions['Parts Counter']) return 'staff';
+    return 'staff';
+  }
+}
+
+// Export singleton instance
+export const mockAuthService = new MockAuthService();
+```
+
+### 8. Component Patterns
+
+#### UI Components (Shadcn/UI Style)
+```typescript
+// Button component with variants
+const buttonVariants = cva(
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+  {
+    variants: {
+      variant: {
+        default: "bg-primary text-primary-foreground shadow-xs hover:bg-primary/90",
+        destructive: "bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
+        outline: "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
+        secondary: "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
+        ghost: "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
+        link: "text-primary underline-offset-4 hover:underline",
+      },
+      size: {
+        default: "h-9 px-4 py-2 has-[>svg]:px-3",
+        sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
+        lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
+        icon: "size-9",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  }
+);
+
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
+  asChild?: boolean;
+}
+
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, variant, size, asChild = false, ...props }, ref) => {
+    const Comp = asChild ? Slot : "button";
+
+    return (
+      <Comp
+        data-slot="button"
+        className={cn(buttonVariants({ variant, size, className }))}
+        ref={ref}
+        {...props} />
+    );
+  }
+);
+Button.displayName = "Button";
+```
+
+#### Page Components
+```typescript
+// Dashboard page with proper typing
+export const ExecutiveDashboard: React.FC = () => {
+  // State with explicit typing
+  const [selectedPeriod, setSelectedPeriod] = useState<string>('month');
+  const [selectedLocation, setSelectedLocation] = useState<string>('all');
+  const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
+
+  // Hooks
+  const { user, permissions } = useAuth();
+  const { addNotification } = useDashboard();
+
+  // Mock data (replace with real API calls)
+  const executiveData: ExecutiveSummary = {
+    revenue: 2847500,
+    unitsSold: 127,
+    grossProfit: 425000,
+    customerSatisfaction: 94.2,
+    activeDeals: 23,
+    pendingAppointments: 45,
+    inventoryValue: 1850000,
+    totalROs: 156,
+    completedROs: 142,
+    averageROValue: 1250,
+    technicianUtilization: 87.5,
+    customerRetention: 92.1,
+  };
+
+  // Event handlers
+  const handleRefresh = async (): Promise<void> => {
+    setIsRefreshing(true);
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    setIsRefreshing(false);
+    addNotification({
+      id: generateId('notification'),
+      type: 'success',
+      title: 'Data Refreshed',
+      message: 'Executive dashboard data has been updated.',
+      timestamp: new Date().toISOString(),
+      read: false,
+    });
+  };
+
+  return (
+    <div className="space-y-6 p-6">
+      {/* Dashboard content */}
+    </div>
+  );
+};
+```
+
+### 9. Type Improvements and Recommendations
+
+#### Replace 'any' Types
+```typescript
+// ❌ Avoid this
+const [searchResults, setSearchResults] = useState<any[]>([]);
+
+// ✅ Use proper typing
+interface SearchResult {
+  id: string;
+  title: string;
+  type: 'customer' | 'vehicle' | 'deal' | 'ro';
+  url: string;
+  score: number;
+}
+
+const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+
+// ❌ Avoid this
+const handleGenericData = (data: any): void => {
+  // Process data
+};
+
+// ✅ Use proper typing
+interface GenericData {
+  id: string;
+  name: string;
+  type: string;
+  metadata?: Record<string, unknown>;
+}
+
+const handleGenericData = (data: GenericData): void => {
+  // Process data with type safety
+};
+```
+
+#### Add Missing Type Annotations
+```typescript
+// ❌ Missing return type
+const calculatePercentageChange = (current: number, previous: number) => {
+  if (previous === 0) return current > 0 ? 100 : 0;
+  return ((current - previous) / previous) * 100;
+};
+
+// ✅ With return type
+const calculatePercentageChange = (current: number, previous: number): number => {
+  if (previous === 0) return current > 0 ? 100 : 0;
+  return ((current - previous) / previous) * 100;
+};
+
+// ❌ Missing parameter types
+const formatUserData = (user) => {
+  return `${user.firstName} ${user.lastName}`;
+};
+
+// ✅ With parameter types
+const formatUserData = (user: User): string => {
+  return `${user.firstName} ${user.lastName}`;
+};
+```
+
+#### Improve Event Handler Types
+```typescript
+// ❌ Generic event handler
+const handleClick = (e) => {
+  console.log(e.target.value);
+};
+
+// ✅ Properly typed event handler
+const handleClick = (e: React.MouseEvent<HTMLButtonElement>): void => {
+  console.log(e.currentTarget.value);
+};
+
+// ✅ Form event handler
+const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
+  e.preventDefault();
+  // Handle form submission
+};
+
+// ✅ Input change handler
+const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+  setValue(e.target.value);
+};
+```
+
+### 10. Error Handling Patterns
+
+#### Try-Catch with Proper Typing
+```typescript
+const handleAsyncOperation = async (): Promise<void> => {
+  try {
+    setLoading(true);
+    const result = await apiService.fetchData();
+    setData(result);
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+    setError(errorMessage);
+    addNotification({
+      id: generateId('notification'),
+      type: 'error',
+      title: 'Error',
+      message: errorMessage,
+      timestamp: new Date().toISOString(),
+      read: false,
+    });
+  } finally {
+    setLoading(false);
+  }
+};
+```
+
+### 11. Performance Optimizations
+
+#### Memoization Patterns
+```typescript
+// Memoized component
+const ExpensiveComponent = React.memo<ComponentProps>(({ data, onAction }) => {
+  const processedData = useMemo(() => {
+    return data.map(item => ({
+      ...item,
+      processed: item.value * 1.1,
+    }));
+  }, [data]);
+
+  const handleAction = useCallback((id: string) => {
+    onAction(id);
+  }, [onAction]);
+
+  return (
+    <div>
+      {processedData.map(item => (
+        <div key={item.id} onClick={() => handleAction(item.id)}>
+          {item.processed}
+        </div>
+      ))}
+    </div>
+  );
+});
+
+ExpensiveComponent.displayName = 'ExpensiveComponent';
+```
+
+### 12. Testing Patterns
+
+#### Component Testing
+```typescript
+// Test file structure
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { BrowserRouter } from 'react-router-dom';
+import { AuthProvider } from '../contexts/AuthContext';
+import { DashboardProvider } from '../contexts/DashboardContext';
+import { ExecutiveDashboard } from './ExecutiveDashboard';
+
+const renderWithProviders = (component: React.ReactElement) => {
+  return render(
+    <BrowserRouter>
+      <AuthProvider>
+        <DashboardProvider>
+          {component}
+        </DashboardProvider>
+      </AuthProvider>
+    </BrowserRouter>
+  );
+};
+
+describe('ExecutiveDashboard', () => {
+  it('renders dashboard with correct data', () => {
+    renderWithProviders(<ExecutiveDashboard />);
+    
+    expect(screen.getByText('Executive Dashboard')).toBeInTheDocument();
+    expect(screen.getByText('$2,847,500')).toBeInTheDocument();
+  });
+
+  it('handles refresh action', async () => {
+    renderWithProviders(<ExecutiveDashboard />);
+    
+    const refreshButton = screen.getByRole('button', { name: /refresh/i });
+    fireEvent.click(refreshButton);
+    
+    await waitFor(() => {
+      expect(screen.getByText('Data Refreshed')).toBeInTheDocument();
+    });
+  });
+});
+```
+
+## Best Practices Summary
+
+1. **Always use explicit typing** for function parameters, return types, and state
+2. **Avoid 'any' types** - create proper interfaces instead
+3. **Use discriminated unions** for action types in reducers
+4. **Implement proper error handling** with typed error messages
+5. **Use React.memo and useCallback** for performance optimization
+6. **Follow the established naming conventions** consistently
+7. **Use the cn utility** for conditional class names
+8. **Implement proper TypeScript strict mode** compliance
+9. **Use proper event handler types** for React events
+10. **Create reusable type definitions** in the types directory
+
+## Common Patterns to Follow
+
+- **Context Pattern**: Use React Context for global state management
+- **Custom Hooks**: Extract reusable logic into custom hooks
+- **Service Layer**: Separate API calls into service classes
+- **Component Composition**: Use composition over inheritance
+- **Type Safety**: Maintain strict type safety throughout the application
+- **Error Boundaries**: Implement proper error handling and boundaries
+- **Performance**: Use React.memo, useMemo, and useCallback appropriately
+- **Accessibility**: Follow ARIA guidelines and semantic HTML
+- **Responsive Design**: Use Tailwind CSS breakpoints consistently
+- **Testing**: Write comprehensive tests for components and utilities
