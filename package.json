@@ -1,0 +1,50 @@
+{
+  "name": "dealerx-enterprise-dashboard-monorepo",
+  "version": "1.0.0",
+  "description": "DealerX Enterprise Dashboard - Full Stack Application",
+  "private": true,
+  "workspaces": [
+    "dealerbuilt-dashboard",
+    "dealerbuilt-api-service"
+  ],
+  "scripts": {
+    "dev": "pnpm --filter dealerx-enterprise-dashboard dev",
+    "dev:frontend": "pnpm --filter dealerx-enterprise-dashboard dev",
+    "dev:backend": "cd dealerbuilt-api-service && python -m uvicorn main:app --reload --host 0.0.0.0 --port 5000",
+    "dev:full": "concurrently \"pnpm dev:backend\" \"pnpm dev:frontend\"",
+    "build": "pnpm --filter dealerx-enterprise-dashboard build",
+    "build:frontend": "pnpm --filter dealerx-enterprise-dashboard build",
+    "test": "pnpm --filter dealerx-enterprise-dashboard test",
+    "test:frontend": "pnpm --filter dealerx-enterprise-dashboard test",
+    "lint": "pnpm --filter dealerx-enterprise-dashboard lint",
+    "lint:frontend": "pnpm --filter dealerx-enterprise-dashboard lint",
+    "install:all": "pnpm install && cd dealerbuilt-dashboard && pnpm install",
+    "setup": "pnpm install:all && echo 'Setup complete! Run \"pnpm dev\" to start the frontend.'",
+    "clean": "pnpm --filter dealerx-enterprise-dashboard clean",
+    "preview": "pnpm --filter dealerx-enterprise-dashboard preview"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/dealerx-enterprise-dashboard.git"
+  },
+  "keywords": [
+    "automotive",
+    "dealership",
+    "dashboard",
+    "dms",
+    "enterprise",
+    "react",
+    "typescript",
+    "python",
+    "fastapi"
+  ],
+  "author": "DealerX Team",
+  "license": "MIT"
+}

@@ -59,33 +59,44 @@ A comprehensive, enterprise-grade dashboard solution that integrates with DMS (D
 
 ## 🚀 Quick Start
 
-### 1. Clone and Setup
+### Option 1: Easy Demo Startup (Recommended for Demo)
 ```bash
+# From the root directory, run one of these:
+./start-demo.ps1          # PowerShell (Windows)
+./start-demo.bat          # Batch file (Windows)
+pnpm dev                  # Using the new root package.json
+```
+
+### Option 2: Manual Setup
+```bash
+# 1. Clone and Setup
 git clone <repository-url>
 cd dealerbuilt-enterprise-dashboard
-cp .env.example .env
+
+# 2. Install dependencies
+pnpm install
+
+# 3. Start the frontend demo
+pnpm dev
 ```
 
-### 2. Configure Environment
-Edit `.env` file with your DMS API credentials:
-```bash
-DEALERBUILT_USERNAME=your_username
-DEALERBUILT_PASSWORD=your_password
-DEALERBUILT_SOURCE_ID=your_source_id
-DEALERBUILT_COMPANY_ID=your_company_id
-DEALERBUILT_STORE_ID=your_store_id
-DEALERBUILT_SERVICE_LOCATION_ID=your_service_location_id
-```
+### 3. Access Demo Dashboard
+- **Frontend Demo**: http://localhost:5173/
+- **Demo Credentials**:
+  - Executive: `executive@dealership.com` / `StrongPassword123!`
+  - Service Manager: `service.manager@dealership.com` / `StrongPassword123!`
+  - Sales Manager: `sales.manager@dealership.com` / `StrongPassword123!`
+  - Staff: `staff@dealership.com` / `StrongPassword123!`
 
-### 3. Deploy
+### 4. Full Production Deployment
 ```bash
+# Configure environment
+cp dealerbuilt-dashboard/env.example dealerbuilt-dashboard/.env
+# Edit .env file with your DMS API credentials
+
+# Deploy with Docker
 ./deploy.sh deploy
 ```
-
-### 4. Access Dashboard
-- **Dashboard**: http://localhost
-- **API Health**: http://localhost/api/dashboard/health
-- **API Documentation**: http://localhost/api/docs
 
 ## 🔧 Development
 

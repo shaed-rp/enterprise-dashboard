@@ -121,7 +121,7 @@ export class CertificatePinner {
     this.EXPECTED_FINGERPRINTS.length = 0;
     this.initialized = false;
     
-    const fingerprints = process.env.REACT_APP_CERTIFICATE_FINGERPRINTS;
+    const fingerprints = typeof process !== 'undefined' ? process.env.REACT_APP_CERTIFICATE_FINGERPRINTS : undefined;
     if (fingerprints) {
       this.EXPECTED_FINGERPRINTS.push(...fingerprints.split(','));
     }
@@ -262,7 +262,7 @@ export class CSPManager {
    * Initialize CSP nonce
    */
   static initialize(): void {
-    this.nonce = process.env.REACT_APP_CSP_NONCE || this.generateNonce();
+    this.nonce = (typeof process !== 'undefined' ? process.env.REACT_APP_CSP_NONCE : undefined) || this.generateNonce();
   }
 
   /**
@@ -503,7 +503,7 @@ export class SecureLogger {
       this.sendToLoggingService('ERROR', sanitizedMessage, sanitizedError);
       
       // Log to console in development and test environments
-      if (process.env.NODE_ENV !== 'production') {
+      if (typeof process !== 'undefined' && process.env.NODE_ENV !== 'production') {
         if (sanitizedError) {
           console.error('Secure Error:', sanitizedMessage, sanitizedError);
         } else {
@@ -526,7 +526,7 @@ export class SecureLogger {
       
       this.sendToLoggingService('WARN', sanitizedMessage, sanitizedData);
       
-      if (process.env.NODE_ENV !== 'production') {
+      if (typeof process !== 'undefined' && process.env.NODE_ENV !== 'production') {
         console.warn('Secure Warning:', sanitizedMessage);
       }
     } catch (error) {
@@ -637,7 +637,7 @@ export class SecureLogger {
       };
 
       // In production, send to secure logging service
-      if (process.env.NODE_ENV === 'production') {
+      if (typeof process !== 'undefined' && process.env.NODE_ENV === 'production') {
         await fetch(SecurityConfigManager.getConfig().secureLogEndpoint, {
           method: 'POST',
           headers: {

@@ -3,6 +3,9 @@ import { mockAuthService } from '../services/mockAuthService';
 import { AuthData, LoginCredentials, User, Organization, Location, UserPermissions } from '../types';
 import { SecureTokenManager, SessionManager, AuditLogger, SecureLogger } from '../lib/security';
 
+// Demo user types
+type DemoUserType = 'executive' | 'service_manager' | 'sales_manager' | 'staff';
+
 // Auth state interface
 interface AuthState {
   isAuthenticated: boolean;
@@ -35,6 +38,7 @@ interface AuthContextType extends AuthState {
   canAccessLocation: (locationId: string) => boolean;
   canAccessDepartment: (department: string) => boolean;
   getUserRole: () => string;
+  quickDemoMode: (userType: DemoUserType) => Promise<{ success: boolean; error?: string }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -284,6 +288,141 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return 'user';
   };
 
+  /**
+   * Quick demo mode bypass (SOC2 VIOLATION - FOR DEMO ONLY)
+   * This bypasses all authentication for instant demo access
+   * REMOVE THIS IN PRODUCTION
+   */
+  const quickDemoMode = async (userType: DemoUserType): Promise<{ success: boolean; error?: string }> => {
+    try {
+      // Create mock user data based on type
+      const mockUsers: Record<DemoUserType, User> = {
+        executive: {
+          id: 'exec_1',
+          firstName: 'John',
+          lastName: 'Executive',
+          email: 'executive@dealership.com',
+          avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Executive',
+          allowedLocations: ['*'],
+          role: 'executive',
+        },
+        service_manager: {
+          id: 'service_1',
+          firstName: 'Sarah',
+          lastName: 'Service',
+          email: 'service.manager@dealership.com',
+          avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Service',
+          allowedLocations: ['loc_1', 'loc_2'],
+          role: 'service_manager',
+        },
+        sales_manager: {
+          id: 'sales_1',
+          firstName: 'Mike',
+          lastName: 'Sales',
+          email: 'sales.manager@dealership.com',
+          avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sales',
+          allowedLocations: ['loc_1', 'loc_2'],
+          role: 'sales_manager',
+        },
+        staff: {
+          id: 'staff_1',
+          firstName: 'Lisa',
+          lastName: 'Staff',
+          email: 'staff@dealership.com',
+          avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Staff',
+          allowedLocations: ['loc_1'],
+          role: 'staff',
+        },
+      };
+
+      const mockPermissions: Record<DemoUserType, UserPermissions> = {
+        executive: {
+          Executive: true,
+          'Dealer Principal': true,
+          'Accounting Access': true,
+          'Service Module Access': true,
+          'Sales/F&I Module Access': true,
+          'Parts Module Access': true,
+          'Management Reports': true,
+        },
+        service_manager: {
+          'Service Module Access': true,
+          'Service Managers': true,
+          'Service Reports': true,
+          'Can Enter Jobs': true,
+          'Can Enter Parts': true,
+          'Can Enter Tech Time': true,
+          'Can Mark RO Completed': true,
+          'Can Open ROs': true,
+        },
+        sales_manager: {
+          'Sales/F&I Module Access': true,
+          'Sales Managers': true,
+          'Sales Reports': true,
+          'Deal Access': true,
+          'Inventory Control': true,
+        },
+        staff: {
+          'Service Module Access': true,
+          'Service Writers': true,
+          'Can Enter Jobs': true,
+        },
+      };
+
+      const user = mockUsers[userType];
+      const permissions = mockPermissions[userType];
+
+      // Create mock auth data
+      const authData: AuthData = {
+        token: `demo_token_${userType}_${Date.now()}`,
+        user,
+        organization: {
+          id: 'org_1',
+          name: 'Demo Dealership Group',
+          logo: 'https://via.placeholder.com/150x50/3B82F6/FFFFFF?text=Demo',
+          type: 'dealership_group',
+          settings: {
+            timezone: 'America/New_York',
+            currency: 'USD',
+            dateFormat: 'MM/DD/YYYY',
+            theme: 'system',
+            language: 'en',
+          },
+          locations: [
+            {
+              id: 'loc_1',
+              name: 'Main Dealership',
+              address: '123 Auto Drive, City, State 12345',
+              phone: '(555) 123-4567',
+              timezone: 'America/New_York',
+              type: 'ford_lincoln',
+              departments: ['sales', 'service', 'parts', 'finance'],
+              manager: 'John Manager',
+              coordinates: { lat: 40.7128, lng: -74.0060 },
+            },
+          ],
+        },
+        location: {
+          id: 'loc_1',
+          name: 'Main Dealership',
+          address: '123 Auto Drive, City, State 12345',
+          phone: '(555) 123-4567',
+          timezone: 'America/New_York',
+          type: 'ford_lincoln',
+          departments: ['sales', 'service', 'parts', 'finance'],
+          manager: 'John Manager',
+          coordinates: { lat: 40.7128, lng: -74.0060 },
+        },
+        permissions,
+      };
+
+      dispatch({ type: 'LOGIN_SUCCESS', payload: authData });
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: 'Demo mode failed' };
+    }
+  };
+
   const value: AuthContextType = {
     ...state,
     login,
@@ -296,6 +435,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     canAccessLocation,
     canAccessDepartment,
     getUserRole,
+    quickDemoMode, // Add the new function
   };
 
   return (
