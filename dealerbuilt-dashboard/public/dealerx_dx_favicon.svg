@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <text fill="currentColor"
+        font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
+        font-size="36"
+        font-weight="700"
+        x="32"
+        y="32"
+        dominant-baseline="middle"
+        text-anchor="middle">
+    DX
+  </text>
+</svg>

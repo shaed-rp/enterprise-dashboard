@@ -180,7 +180,7 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
                 <Building2 className="w-5 h-5 text-sidebar-primary-foreground" />
               </div>
               <div>
-                <h2 className="font-semibold text-sidebar-foreground">DealerBuilt</h2>
+                <h2 className="font-semibold text-sidebar-foreground">DealerX</h2>
                 <p className="text-xs text-sidebar-foreground/60">Enterprise Dashboard</p>
               </div>
             </motion.div>
