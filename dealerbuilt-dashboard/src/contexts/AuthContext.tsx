@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
 import { mockAuthService } from '../services/mockAuthService';
 import { AuthData, LoginCredentials, User, Organization, Location, UserPermissions } from '../types';
+import { SecureTokenManager, SessionManager, AuditLogger, SecureLogger } from '../lib/security';
 
 // Auth state interface
 interface AuthState {
@@ -109,11 +110,11 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
 
-  // Initialize auth state from localStorage
+  // Initialize auth state from secure storage
   useEffect(() => {
     const initializeAuth = async () => {
-      const token = localStorage.getItem('auth_token');
-      const userData = localStorage.getItem('user_data');
+      const token = SecureTokenManager.getToken();
+      const userData = sessionStorage.getItem('user_data');
       
       if (token && userData) {
         try {
@@ -134,10 +135,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               type: 'LOGIN_SUCCESS',
               payload: authData,
             });
+            
+            // Start secure session management
+            SessionManager.startSession();
+            
+            AuditLogger.logAuthEvent('LOGIN', true, { method: 'token_restore' });
           }
         } catch (error) {
-          localStorage.removeItem('auth_token');
-          localStorage.removeItem('user_data');
+          SecureTokenManager.clearToken();
+          sessionStorage.removeItem('user_data');
+          SecureLogger.error('Failed to restore authentication from token', error);
         }
       }
     };
@@ -151,18 +158,35 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       const authData = await mockAuthService.login(credentials);
       
-      // Store auth data
-      localStorage.setItem('auth_token', authData.token);
-      localStorage.setItem('user_data', JSON.stringify(authData.user));
+      // Store auth data securely
+      SecureTokenManager.setToken(authData.token);
+      sessionStorage.setItem('user_data', JSON.stringify(authData.user));
       
       dispatch({
         type: 'LOGIN_SUCCESS',
         payload: authData,
       });
       
+      // Start secure session management
+      SessionManager.startSession();
+      
+      // Log successful authentication
+      AuditLogger.logAuthEvent('LOGIN', true, { 
+        method: 'credentials',
+        username: credentials.username 
+      });
+      
       return { success: true };
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Login failed';
+      
+      // Log failed authentication
+      AuditLogger.logAuthEvent('LOGIN_FAILED', false, { 
+        method: 'credentials',
+        username: credentials.username,
+        error: errorMessage 
+      });
+      
       dispatch({
         type: 'LOGIN_FAILURE',
         payload: errorMessage,
@@ -172,8 +196,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const logout = (): void => {
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('user_data');
+    // Log logout event
+    AuditLogger.logAuthEvent('LOGOUT', true);
+    
+    // Clear secure storage
+    SecureTokenManager.clearToken();
+    sessionStorage.removeItem('user_data');
+    
+    // End secure session
+    SessionManager.endSession();
+    
     dispatch({ type: 'LOGOUT' });
   };
 

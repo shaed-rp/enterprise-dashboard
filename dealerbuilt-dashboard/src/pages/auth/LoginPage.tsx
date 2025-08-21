@@ -107,11 +107,24 @@ export const LoginPage: React.FC = () => {
   };
 
   const handleDemoLogin = async (userType: DemoUserType): Promise<void> => {
+    // Use environment variables for demo credentials in production
     const demoCredentials: Record<DemoUserType, { username: string; password: string }> = {
-      executive: { username: 'executive@dealership.com', password: 'demo123' },
-      service_manager: { username: 'service.manager@dealership.com', password: 'demo123' },
-      sales_manager: { username: 'sales.manager@dealership.com', password: 'demo123' },
-      staff: { username: 'staff@dealership.com', password: 'demo123' },
+      executive: { 
+        username: process.env.REACT_APP_DEMO_EXECUTIVE_USERNAME || 'executive@dealership.com', 
+        password: process.env.REACT_APP_DEMO_EXECUTIVE_PASSWORD || 'demo123' 
+      },
+      service_manager: { 
+        username: process.env.REACT_APP_DEMO_SERVICE_USERNAME || 'service.manager@dealership.com', 
+        password: process.env.REACT_APP_DEMO_SERVICE_PASSWORD || 'demo123' 
+      },
+      sales_manager: { 
+        username: process.env.REACT_APP_DEMO_SALES_USERNAME || 'sales.manager@dealership.com', 
+        password: process.env.REACT_APP_DEMO_SALES_PASSWORD || 'demo123' 
+      },
+      staff: { 
+        username: process.env.REACT_APP_DEMO_STAFF_USERNAME || 'staff@dealership.com', 
+        password: process.env.REACT_APP_DEMO_STAFF_PASSWORD || 'demo123' 
+      },
     };
 
     const credentials = demoCredentials[userType];

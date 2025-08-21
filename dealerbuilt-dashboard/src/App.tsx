@@ -4,6 +4,7 @@ import { ThemeProvider } from 'next-themes';
 import { Toaster } from 'sonner';
 import { AuthProvider } from './contexts/AuthContext';
 import { DashboardProvider } from './contexts/DashboardContext';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { LoginPage } from './pages/auth/LoginPage';
 import { DashboardLayout } from './layouts/DashboardLayout';
@@ -25,64 +26,66 @@ import './App.css';
 
 const App: React.FC = () => {
   return (
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-      <AuthProvider>
-        <DashboardProvider>
-          <Router>
-            <div className="min-h-screen bg-background">
-              <Routes>
-                {/* Public Routes */}
-                <Route path="/login" element={<LoginPage />} />
-                
-                {/* Protected Routes */}
-                <Route path="/" element={
-                  <ProtectedRoute>
-                    <DashboardLayout />
-                  </ProtectedRoute>
-                }>
-                  {/* Dashboard Routes */}
-                  <Route index element={<Navigate to="/dashboard/executive" replace />} />
-                  <Route path="dashboard/executive" element={<ExecutiveDashboard />} />
-                  <Route path="dashboard/service" element={<ServiceDashboard />} />
-                  <Route path="dashboard/sales" element={<SalesDashboard />} />
-                  <Route path="dashboard/parts" element={<PartsDashboard />} />
-                  <Route path="dashboard/finance" element={<FinanceDashboard />} />
-                  <Route path="dashboard/customer" element={<CustomerPortal />} />
-                  <Route path="dashboard/vendor" element={<VendorPortal />} />
+    <ErrorBoundary>
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <AuthProvider>
+          <DashboardProvider>
+            <Router>
+              <div className="min-h-screen bg-background">
+                <Routes>
+                  {/* Public Routes */}
+                  <Route path="/login" element={<LoginPage />} />
                   
-                  {/* Operational Routes */}
-                  <Route path="customers" element={<CustomersPage />} />
-                  <Route path="inventory" element={<InventoryPage />} />
-                  <Route path="appointments" element={<AppointmentsPage />} />
-                  <Route path="repair-orders" element={<RepairOrdersPage />} />
-                  <Route path="deals" element={<DealsPage />} />
+                  {/* Protected Routes */}
+                  <Route path="/" element={
+                    <ProtectedRoute>
+                      <DashboardLayout />
+                    </ProtectedRoute>
+                  }>
+                    {/* Dashboard Routes */}
+                    <Route index element={<Navigate to="/dashboard/executive" replace />} />
+                    <Route path="dashboard/executive" element={<ExecutiveDashboard />} />
+                    <Route path="dashboard/service" element={<ServiceDashboard />} />
+                    <Route path="dashboard/sales" element={<SalesDashboard />} />
+                    <Route path="dashboard/parts" element={<PartsDashboard />} />
+                    <Route path="dashboard/finance" element={<FinanceDashboard />} />
+                    <Route path="dashboard/customer" element={<CustomerPortal />} />
+                    <Route path="dashboard/vendor" element={<VendorPortal />} />
+                    
+                    {/* Operational Routes */}
+                    <Route path="customers" element={<CustomersPage />} />
+                    <Route path="inventory" element={<InventoryPage />} />
+                    <Route path="appointments" element={<AppointmentsPage />} />
+                    <Route path="repair-orders" element={<RepairOrdersPage />} />
+                    <Route path="deals" element={<DealsPage />} />
+                    
+                    {/* System Routes */}
+                    <Route path="reports" element={<ReportsPage />} />
+                    <Route path="settings" element={<SettingsPage />} />
+                  </Route>
                   
-                  {/* System Routes */}
-                  <Route path="reports" element={<ReportsPage />} />
-                  <Route path="settings" element={<SettingsPage />} />
-                </Route>
+                  {/* Fallback */}
+                  <Route path="*" element={<Navigate to="/dashboard/executive" replace />} />
+                </Routes>
                 
-                {/* Fallback */}
-                <Route path="*" element={<Navigate to="/dashboard/executive" replace />} />
-              </Routes>
-              
-              {/* Global Components */}
-              <Toaster 
-                position="top-right" 
-                toastOptions={{
-                  duration: 4000,
-                  style: {
-                    background: 'hsl(var(--background))',
-                    color: 'hsl(var(--foreground))',
-                    border: '1px solid hsl(var(--border))',
-                  },
-                }}
-              />
-            </div>
-          </Router>
-        </DashboardProvider>
-      </AuthProvider>
-    </ThemeProvider>
+                {/* Global Components */}
+                <Toaster 
+                  position="top-right" 
+                  toastOptions={{
+                    duration: 4000,
+                    style: {
+                      background: 'hsl(var(--background))',
+                      color: 'hsl(var(--foreground))',
+                      border: '1px solid hsl(var(--border))',
+                    },
+                  }}
+                />
+              </div>
+            </Router>
+          </DashboardProvider>
+        </AuthProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
   );
 };
 

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
 import { useAuth } from './AuthContext';
 import { Notification } from '../types';
+import { SecureLogger, AuditLogger } from '../lib/security';
 
 // Widget interface
 interface Widget {
@@ -193,9 +194,9 @@ export const DashboardProvider: React.FC<DashboardProviderProps> = ({ children }
           dispatch({ type: 'SET_SIDEBAR_COLLAPSED', payload: prefs.sidebarCollapsed || false });
           dispatch({ type: 'SET_REFRESH_INTERVAL', payload: prefs.refreshInterval || 60000 });
           dispatch({ type: 'SET_FILTERS', payload: prefs.filters || {} });
-        } catch (error) {
-          console.error('Failed to load dashboard preferences:', error);
-        }
+            } catch (error) {
+      SecureLogger.error('Failed to load dashboard preferences', error);
+    }
       }
     }
   }, [user]);
